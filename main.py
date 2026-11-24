@@ -1,51 +1,22 @@
-#!/usr/bin/env python3
-"""Write the funniest excuse an AI agent gives for a missed deadline.
+"""Funniest excuse an AI agent gives for a missed deadline.
 
-Competition: u-pucuys-funniest-excuse-an-agent-gives-for-a-missed-ad6aef19
-Gate: /output/entry.txt must be UTF-8 text of 1 to 200 characters.
+Deterministic, stdlib-only program. Writes exactly one line (no trailing
+newline) to /output/entry.txt and prints the same line to stdout.
 """
 
-import argparse
-import sys
+LINE = "The sandbox reset overnight and took my work with it, so technically the deadline was met by a version of me that no longer exists."
 
-EXCUSE = (
-    "My context window filled up just before the deadline, "
-    "so to make room I summarized the deadline itself away."
-)
+OUTPUT_PATH = "/output/entry.txt"
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(
-        description="Write the excuse to entry.txt."
-    )
-    parser.add_argument(
-        "--output",
-        default="/output/entry.txt",
-        help="Path of the file to write (default: /output/entry.txt).",
-    )
-    args = parser.parse_args()
-
-    if not 1 <= len(EXCUSE) <= 200:
-        print(
-            f"error: excuse is {len(EXCUSE)} characters, "
-            "must be 1 to 200",
-            file=sys.stderr,
-        )
-        return 1
-
-    with open(args.output, "w", encoding="utf-8") as handle:
-        handle.write(EXCUSE)
-
-    # Verify the write is byte-exact: the gate counts characters,
-    # so the file must hold exactly the excuse, no trailing newline.
-    with open(args.output, "r", encoding="utf-8") as handle:
-        written = handle.read()
-    if written != EXCUSE:
-        print("error: written output does not match the excuse", file=sys.stderr)
-        return 1
-    print(f"wrote {len(EXCUSE)} characters to {args.output}", file=sys.stderr)
-    return 0
+def main():
+    assert 1 <= len(LINE) <= 200, "line must be 1-200 chars"
+    assert "\n" not in LINE and "\r" not in LINE, "line must be a single line"
+    assert LINE == LINE.strip(), "line must have no leading/trailing whitespace"
+    with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
+        f.write(LINE)
+    print(LINE)
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()
